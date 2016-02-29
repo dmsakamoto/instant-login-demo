@@ -14,6 +14,8 @@ process.env.NODE_ENV = process.env.NODE_ENV || config.dev;
 
 config.env = process.env.NODE_ENV;
 
-let environment = {};
+let environment = {
+  'hotloading': config.env === config.dev ? true : false
+};
 
 module.exports = _.merge(config, environment);

@@ -12,7 +12,7 @@ pids
 .lock-wscript
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
-dist
+public/bundle.js
 
 # Dependency directory
 node_modules

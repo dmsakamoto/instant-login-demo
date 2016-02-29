@@ -19,14 +19,16 @@ let app = express();
 
 require('./middleware')(app);
 
-let compiler = webpack(webpackConfig);
-app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: webpackConfig.output.publicPath }));
-app.use(webpackHotMiddleware(compiler));
+if (config.hotloading) {
+  let compiler = webpack(webpackConfig);
+  app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: webpackConfig.output.publicPath }));
+  app.use(webpackHotMiddleware(compiler));
+}
 
 // app.use('/api', api);
 
 app.get('/', function (req, res) {
-  res.sendFile('index.html', { root: __dirname + '/..' });
+  res.sendFile('index.html', { root: __dirname + '/../public' });
 });
 
 app.listen(config.port);
