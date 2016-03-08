@@ -24,4 +24,4 @@ node_modules
 .node_repl_history
 
 # Secrets
-secrets.js
+server/secrets.js
