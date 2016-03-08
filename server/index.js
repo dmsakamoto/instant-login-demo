@@ -13,14 +13,15 @@ let app = express();
 // Set configuration variables
 let config = {
   port: process.env.PORT || 3000,
-  env: process.env.NODE_ENV || 'development'
+  env: process.env.NODE_ENV || 'development',
+  clever: {}
 }
 
 // Load Clever ID and Secret for respective environment
 if (config.env === 'development') {
   let secrets = require('./secrets');
-  config.clever.id = secrets.clever.id;
-  config.clever.secret = secrets.clever.secret;
+  config.clever.id = secrets.id;
+  config.clever.secret = secrets.secret;
 } else {
   config.clever.id = process.env.CLEVER_ID;
   config.clever.secret = process.env.CLEVER_SECRET;
