@@ -6,6 +6,9 @@
 
 // Load dependencies
 let express = require('express');
+let session = require('express-session');
+let bodyParser = require('body-parser');
+let morgan = require('morgan');
 
 // Set up server
 let app = express();
@@ -28,6 +31,11 @@ if (config.env === 'development') {
 }
 
 // Load middleware
+app.use(morgan('dev'));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+// Middleware to serve static assets
 app.use('/images', express.static(__dirname + '/../public/images'));
 
 // Set up initial routes and requests
