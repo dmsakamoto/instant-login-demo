@@ -124,8 +124,9 @@ app.get('/oauth', function (req, res) {
           if (!err) {
             // OAuth 2.0 Step 4 - Clever has authorized the user
             console.log('Congratulations! The user is authorized!');
-            console.log('Retrieved user', result.data);
+            console.log('Retrieved user', result);
             req.session.user = result.data;
+            console.log(req.session.user);
             res.redirect('/app');
           } else {
             console.error('Error with Access Token:', err);
@@ -142,7 +143,7 @@ app.get('/oauth', function (req, res) {
 
 // App
 app.get('/app', function (req, res) {
-  console.log('Redirected to app');
+  console.log('Redirected to app', req.session);
   if(!req.session.user) {
     res.redirect('/');
   } else {
