@@ -67,7 +67,7 @@ let makeRequest = function (options, callback) {
       let statusCode = res.statusCode;
       if (statusCode !== 200) {
         let error = body.error;
-        console.error('Received non-200 status code:', statusCode, error);
+        console.error('Received non-200 status code:', statusCode, error, body);
         callback(error);
       } else {
         callback(null, body);
@@ -81,38 +81,39 @@ let makeRequest = function (options, callback) {
 
 // Homepage
 app.get('/', function (req, res) {
-  res.sendFile('index.html', {
-    root: __dirname + '/../public',
-    redirect_uri: encodeURIComponent(config.url + '/oauth'),
-    client_id: config.clever.id
-  });
+  res.sendFile('index.html', { root: __dirname + '/../public' });
 });
 
 // OAuth 2.0 endpoint
 app.get('/oauth', function (req, res) {
+  console.log('Received response from Clever');
   if(!req.query.code){
     res.redirect('/');
   } else {
+    console.log('Received an Authorization Code from Clever', req.query.code);
     // OAuth 2.0 Step 1 - Request Access Token
     let body = {
-      code: req.body.code,
+      code: req.query.code,
       grant_type: 'authorization_code',
       redirect_uri: config.url + '/oauth'
     };
     let options = {
       url: OAUTH_TOKEN_URL,
-      method: 'POST',
+      method: 'post',
       json: body,
       headers: {
-        Authorization: 'Basic ' + new Buffer(config.id + ':' + config.secret).toString('base64')
+        'Authorization': 'Basic ' + new Buffer(config.clever.id + ':' + config.clever.secret).toString('base64'),
+        'Content-Type': 'application/json'
       }
     }
     makeRequest(options, function(err, result) {
+      console.log('Made a request for an Access Token with the code', options.json.code);
       if (!err) {
         // OAuth 2.0 Step 2 - Clever sends back Access Token
         let token = result.access_token;
         options = {
           url: API_PREFIX + '/me',
+          method: 'get',
           json: true,
           headers: {
             Authorization: 'Bearer ' + token
@@ -123,6 +124,7 @@ app.get('/oauth', function (req, res) {
           if (!err) {
             // OAuth 2.0 Step 4 - Clever has authorized the user
             console.log('Congratulations! The user is authorized!');
+            console.log('Retrieved user', result.data);
             req.session.user = result.data;
             res.redirect('/app');
           } else {
@@ -140,6 +142,7 @@ app.get('/oauth', function (req, res) {
 
 // App
 app.get('/app', function (req, res) {
+  console.log('Redirected to app');
   if(!req.session.user) {
     res.redirect('/');
   } else {
