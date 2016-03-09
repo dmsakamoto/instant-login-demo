@@ -49,8 +49,7 @@ app.use(bodyParser.json());
 app.use(session({
   'secret': 'somesecret',
   'saveUninitialized': true,
-  'resave': false,
-  'cookie': { 'secure': true }
+  'resave': false
 }));
 
 // Middleware to serve static assets
@@ -156,7 +155,7 @@ app.get('/logout', function (req, res) {
   if (!req.session.user) {
     res.redirect('/');
   } else {
-    delete req.session.user;
+    req.session.destroy();
     res.redirect('/');
   }
 });
