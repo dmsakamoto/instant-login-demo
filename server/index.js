@@ -39,10 +39,12 @@ app.use(bodyParser.json());
 app.use('/images', express.static(__dirname + '/../public/images'));
 
 // Set up initial routes and requests
+// Send homepage
 app.get('/', function (req, res) {
   res.sendFile('index.html', { root: __dirname + '/../public' });
 });
 
+// Send app
 app.get('/app', function (req, res) {
   res.sendFile('app.html', { root: __dirname + '/../public' });
 })
