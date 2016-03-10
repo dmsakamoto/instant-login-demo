@@ -7,9 +7,11 @@
 // Clever addresses
 const OAUTH_TOKEN_URL = 'https://clever.com/oauth/tokens';
 const API_PREFIX = 'https://api.clever.com';
+const DISTRICT_ID = '56df50fa892c7001000000c5';
 
 // Load dependencies
 let express = require('express');
+let exphbs = require('express-handlebars');
 let session = require('express-session');
 let bodyParser = require('body-parser');
 let morgan = require('morgan');
@@ -17,6 +19,8 @@ let request = require('request');
 
 // Set up server
 let app = express();
+app.engine('handlebars', exphbs());
+app.set('view engine', 'handlebars');
 
 /**
  * Server configuration
@@ -81,7 +85,11 @@ let makeRequest = function (options, callback) {
 
 // Homepage
 app.get('/', function (req, res) {
-  res.sendFile('index.html', { root: __dirname + '/../public' });
+  res.render('index', {
+    'redirect_uri': encodeURIComponent(config.url + '/oauth'),
+    'client_id': config.clever.id,
+    'district_id': DISTRICT_ID
+  });
 });
 
 // OAuth 2.0 endpoint
@@ -148,7 +156,9 @@ app.get('/app', function (req, res) {
   if(!req.session.user) {
     res.redirect('/');
   } else {
-    res.sendFile('app.html', { root: __dirname + '/../public' });
+    res.render('app',{
+      'user': JSON.stringify(req.session.user)
+    })
   }
 });
 
