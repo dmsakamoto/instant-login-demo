@@ -4,6 +4,7 @@
 
 'use strict'
 
+// Clever addresses
 const OAUTH_TOKEN_URL = 'https://clever.com/oauth/tokens';
 const API_PREFIX = 'https://api.clever.com';
 
@@ -85,12 +86,12 @@ app.get('/', function (req, res) {
 
 // OAuth 2.0 endpoint
 app.get('/oauth', function (req, res) {
+  // OAuth 2.0 Step 2 - Received Authorization Code
   console.log('Received response from Clever');
   if(!req.query.code){
     res.redirect('/');
   } else {
     console.log('Received an Authorization Code from Clever', req.query.code);
-    // OAuth 2.0 Step 1 - Request Access Token
     let body = {
       code: req.query.code,
       grant_type: 'authorization_code',
@@ -105,10 +106,11 @@ app.get('/oauth', function (req, res) {
         'Content-Type': 'application/json'
       }
     }
+    // OAuth 2.0 Step 3 - Request Access Token
     makeRequest(options, function(err, result) {
       console.log('Made a request for an Access Token with the code', options.json.code);
+      // OAuth 2.0 Step 4 - Received Access Token
       if (!err) {
-        // OAuth 2.0 Step 2 - Clever sends back Access Token
         let token = result.access_token;
         options = {
           url: API_PREFIX + '/me',
@@ -118,10 +120,9 @@ app.get('/oauth', function (req, res) {
             Authorization: 'Bearer ' + token
           }
         }
-        // OAuth 2.0 Step 3 -
+        // Make a request to Clever API with Access Token
         makeRequest(options, function (err, result){
           if (!err) {
-            // OAuth 2.0 Step 4 - Clever has authorized the user
             console.log('Congratulations! The user is authorized!');
             console.log('Retrieved user', result);
             req.session.user = result.data;
@@ -143,6 +144,7 @@ app.get('/oauth', function (req, res) {
 // App
 app.get('/app', function (req, res) {
   console.log('Redirected to app', req.session);
+  // Check if we received a user
   if(!req.session.user) {
     res.redirect('/');
   } else {
