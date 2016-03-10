@@ -85,6 +85,7 @@ let makeRequest = function (options, callback) {
 
 // Homepage
 app.get('/', function (req, res) {
+  // Render index and send redirect_uri, client_id, and district_id
   res.render('index', {
     'redirect_uri': encodeURIComponent(config.url + '/oauth'),
     'client_id': config.clever.id,
@@ -156,6 +157,7 @@ app.get('/app', function (req, res) {
   if(!req.session.user) {
     res.redirect('/');
   } else {
+    // Render app and send user
     res.render('app',{
       'user': JSON.stringify(req.session.user)
     })
