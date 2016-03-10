@@ -66,7 +66,7 @@ let makeRequest = function (options, callback) {
       let statusCode = res.statusCode;
       if (statusCode !== 200) {
         let error = body.error;
-        console.error('Received non-200 status code:', statusCode, error, body);
+        console.error('Received non-200 status code:', statusCode, error);
         callback(error);
       } else {
         callback(null, body);
